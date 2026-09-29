@@ -1,0 +1,36 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: aimoderator-postgres
+    environment:
+      POSTGRES_USER: aimoderator
+      POSTGRES_PASSWORD: aimoderator
+      POSTGRES_DB: aimoderator
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aimoderator -d aimoderator"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    container_name: aimoderator-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      AIMODERATOR_DATABASE_URL: postgresql+psycopg://aimoderator:aimoderator@postgres:5432/aimoderator
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "alembic upgrade head &&
+             uvicorn aimoderator.main:app --host 0.0.0.0 --port 8000"
+
+volumes:
+  postgres_data:

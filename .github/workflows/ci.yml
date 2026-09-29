@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: aimoderator
+          POSTGRES_PASSWORD: aimoderator
+          POSTGRES_DB: aimoderator
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U aimoderator -d aimoderator"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      AIMODERATOR_DATABASE_URL: postgresql+psycopg://aimoderator:aimoderator@localhost:5432/aimoderator
+      AIMODERATOR_SECRET_KEY: ci-secret-key
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Crear entorno virtual e instalar dependencias
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install --upgrade pip
+          .venv/bin/pip install -e ".[dev]"
+
+      - name: Lint
+        run: .venv/bin/ruff check .
+
+      - name: Formato
+        run: .venv/bin/ruff format --check .
+
+      - name: Tipos
+        run: .venv/bin/mypy src
+
+      - name: Migraciones
+        run: .venv/bin/alembic upgrade head
+
+      - name: Tests
+        run: .venv/bin/pytest

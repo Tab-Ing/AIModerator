@@ -1,0 +1,32 @@
+name: CLA
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, closed]
+
+permissions:
+  actions: write
+  contents: write
+  pull-requests: write
+  statuses: write
+
+jobs:
+  cla:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verificar firma del CLA
+        uses: contributor-assistant/github-action@v2.6.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.CLA_SIGNATURES_TOKEN }}
+        with:
+          path-to-signatures: signatures/version1/cla.json
+          path-to-document: https://github.com/OWNER/REPO/blob/main/CLA.md
+          branch: cla-signatures
+          allowlist: dependabot[bot],renovate[bot]
+          custom-notsigned-prcomment: >
+            Gracias por tu aporte. Antes de fusionarlo necesitamos que firmes el
+            [Acuerdo de Licencia de Contribuyente (CLA)](../CLA.md) comentando
+            exactamente: _"I have read the CLA Document and I hereby sign the CLA"_.
+          custom-pr-sign-comment: I have read the CLA Document and I hereby sign the CLA
+          custom-allsigned-prcomment: Todas las personas contribuyentes firmaron el CLA.

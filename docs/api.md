@@ -86,6 +86,18 @@ Ejemplo de creación:
 }
 ```
 
+## `POST /v1/moderate/batch`
+
+Modera hasta **100** comentarios con un mismo perfil (scope `moderate`). Los resultados
+respetan el orden de entrada y la cuota se descuenta por la cantidad de ítems.
+
+```json
+{"profile_id": "uuid-opcional",
+ "items": [{"text": "hola"}, {"text": "sos un idiota"}]}
+```
+
+Devuelve `{"count": 2, "results": [ ... ]}`.
+
 ## Uso y cuotas
 
 `GET /v1/usage` (scope `usage:read`) devuelve el consumo diario y la cuota:
@@ -101,3 +113,4 @@ Ejemplo de creación:
 | GET | `/v1/health` | Liveness |
 | GET | `/v1/ready` | Readiness (verifica PostgreSQL) |
 | GET | `/v1/version` | Versión del servicio |
+| GET | `/metrics` | Métricas Prometheus (fuera de `/v1`) |

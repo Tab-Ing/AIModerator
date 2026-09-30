@@ -44,10 +44,12 @@ class UsageService:
             remaining=max(0, quota - used),
         )
 
-    async def ensure_within_quota(self, session: AsyncSession, tenant: Tenant) -> None:
+    async def ensure_within_quota(
+        self, session: AsyncSession, tenant: Tenant, amount: int = 1
+    ) -> None:
         period = current_period()
         used = await usage_repo.get_count(session, tenant.id, period)
-        if used >= self.quota_for(tenant):
+        if used + amount > self.quota_for(tenant):
             raise QuotaExceededError("Cuota diaria de moderación excedida")
 
     async def consume(self, session: AsyncSession, tenant: Tenant, amount: int = 1) -> None:

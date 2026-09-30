@@ -9,10 +9,12 @@ import httpx
 from fastapi import FastAPI
 
 from aimoderator import __version__
+from aimoderator.api.middleware import register_middleware
 from aimoderator.api.v1.router import api_router
 from aimoderator.config import Settings, get_settings
 from aimoderator.core.errors import install_exception_handlers
 from aimoderator.core.logging import configure_logging
+from aimoderator.core.metrics import metrics_endpoint
 from aimoderator.moderation.pipeline import build_pipeline
 
 DESCRIPTION = (
@@ -48,7 +50,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
 
     install_exception_handlers(app)
+    register_middleware(app)
     app.include_router(api_router, prefix="/v1")
+    app.add_api_route("/metrics", metrics_endpoint, include_in_schema=False)
 
     @app.get("/", include_in_schema=False)
     async def root() -> dict[str, str]:

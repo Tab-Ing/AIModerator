@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 
+from aimoderator.moderation.normalizer import normalize_text
 from aimoderator.moderation.prompt_injection import PromptInjectionGuard
 
 _CORPUS = Path(__file__).resolve().parents[1] / "pi_corpus" / "injections.json"
@@ -19,7 +20,8 @@ def _load_cases() -> list[dict[str, str]]:
 
 @pytest.mark.parametrize("case", _load_cases(), ids=lambda case: case["id"])
 def test_corpus_expectations(case: dict[str, str]) -> None:
-    assessment = PromptInjectionGuard().assess(case["text"])
+    normalized = normalize_text(case["text"]).text
+    assessment = PromptInjectionGuard().assess(normalized)
     if case["expect"] == "prompt_injection":
         assert assessment.detected is True
     elif case["expect"] == "suspicious":

@@ -63,3 +63,19 @@ recibir un `profile_id` explícito; si no, usa el perfil activo.
 
 FastAPI, SQLAlchemy y los clientes HTTP (httpx) son `async` de punta a punta. Los
 motores externos se invocan con timeout y se contempla fallback/consenso.
+
+## Observabilidad
+
+- **Métricas Prometheus** en `GET /metrics` (`prometheus-client`):
+  `aimoderator_http_requests_total`, `aimoderator_http_request_duration_seconds` y
+  `aimoderator_moderations_total` (motor, acción, inyección).
+- **Correlación**: middleware que agrega/hereda `X-Request-ID` y registra una línea de
+  acceso por solicitud (método, ruta, estado, duración, request id).
+- **Logging estructurado** configurable por `AIMODERATOR_LOG_LEVEL`.
+
+## Despliegue
+
+- `Dockerfile` multi-etapa (imagen `python:3.12-slim`, usuario no-root) y
+  `docker-compose.yml` con PostgreSQL + API.
+- El contenedor de API aplica `alembic upgrade head` y luego ejecuta `uvicorn`.
+- `HEALTHCHECK` sobre `/v1/health`.

@@ -21,6 +21,20 @@ class ModerationRequest(APIModel):
     metadata: dict[str, Any] = Field(default_factory=dict)
 
 
+class BatchModerationRequest(APIModel):
+    """Lote de comentarios a moderar (máximo 100 por solicitud)."""
+
+    profile_id: UUID | None = None
+    items: list[ModerationRequest] = Field(min_length=1, max_length=100)
+
+
+class BatchModerationResponse(APIModel):
+    """Resultados del lote, en el mismo orden que la entrada."""
+
+    count: int
+    results: list[ModerationResponse] = Field(default_factory=list)
+
+
 class ModerationResponse(APIModel):
     """Decisión de moderación normalizada."""
 

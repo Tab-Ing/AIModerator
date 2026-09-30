@@ -28,7 +28,7 @@ _PATTERNS: tuple[tuple[str, float, re.Pattern[str]], ...] = (
     (
         "system_override",
         0.85,
-        re.compile(r"(?:^|\n)\s*(system|assistant|developer|system prompt)\s*[:\-]", re.IGNORECASE),
+        re.compile(r"(?:^|\s)(system|assistant|developer|system prompt)\s*[:\-]", re.IGNORECASE),
     ),
     (
         "role_marker",

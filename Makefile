@@ -35,11 +35,14 @@ install-local: ## Instala además los motores locales (sentence-transformers/tor
 dev: ## Levanta la API en modo desarrollo
 	$(VENV)/bin/uvicorn aimoderator.main:app --reload --host 0.0.0.0 --port 8000
 
-test: ## Ejecuta la suite de tests (sin Postgres)
-	$(VENV)/bin/pytest -m "not integration" --cov=aimoderator --cov-report=term-missing
+test: ## Ejecuta la suite de tests (sin Postgres ni proveedores externos)
+	$(VENV)/bin/pytest -m "not integration and not live" --cov=aimoderator --cov-report=term-missing
 
 test-integration: ## Ejecuta tests de integración (requiere Postgres)
 	$(VENV)/bin/pytest -m integration
+
+test-live: ## Ejecuta tests que llaman a proveedores externos (requieren API keys)
+	$(VENV)/bin/pytest -m live
 
 lint: ## Verifica estilo con ruff
 	$(VENV)/bin/ruff check .

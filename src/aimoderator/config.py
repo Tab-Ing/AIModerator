@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     host: str = "0.0.0.0"
     port: int = 8000
 
-    database_url: str = "postgresql+psycopg://aimoderator:aimoderator@localhost:5432/aimoderator"
+    database_url: str = "postgresql+psycopg://aimoderator:aimoderator@localhost:55432/aimoderator"
 
     secret_key: str = "dev-insecure-change-me"
     api_key_prefix: str = "aim_"

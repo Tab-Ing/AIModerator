@@ -199,6 +199,7 @@ def build_engine_registry(settings: Settings, client: httpx.AsyncClient) -> Engi
                 model=settings.llm_model,
                 api_key=settings.llm_api_key,
                 timeout=settings.engine_timeout_seconds,
+                chat_path=settings.llm_chat_path,
             )
         )
 

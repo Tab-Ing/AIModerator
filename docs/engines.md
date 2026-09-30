@@ -49,7 +49,11 @@ Cliente compatible con la API OpenAI (`POST /v1/chat/completions`), configurable
 - Se exige salida en JSON (`response_format=json_object`) y se valida con Pydantic
   (`toxicity`, `harassment`, `hate`, `spam`, `prompt_injection`, `confidence`).
 - Config: `AIMODERATOR_LLM_ENABLED`, `AIMODERATOR_LLM_BASE_URL`,
-  `AIMODERATOR_LLM_MODEL`, `AIMODERATOR_LLM_API_KEY`.
+  `AIMODERATOR_LLM_CHAT_PATH` (default `/chat/completions`), `AIMODERATOR_LLM_MODEL`,
+  `AIMODERATOR_LLM_API_KEY`.
+- La `BASE_URL` incluye el prefijo de versión solo si el proveedor lo usa (DeepSeek no:
+  `https://api.deepseek.com`; OpenAI sí: `https://api.openai.com/v1`).
+- Verificación en vivo: `.venv/bin/python scripts/check_llm.py`.
 - Rol: análisis en profundidad, casos ambiguos, fallback/consenso.
 
 ## Local — `LocalMLEngine`

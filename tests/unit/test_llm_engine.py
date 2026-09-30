@@ -13,14 +13,14 @@ from aimoderator.engines.base import ClassificationRequest
 from aimoderator.engines.llm import LLMEngine
 from aimoderator.schemas.common import Category
 
-_URL = "https://llm.test/v1/chat/completions"
+_URL = "https://llm.test/chat/completions"
 
 
 def _engine(client: httpx.AsyncClient) -> LLMEngine:
     return LLMEngine(
         client=client,
         base_url="https://llm.test",
-        model="deepseek-chat",
+        model="deepseek-flash",
         api_key="secret",
     )
 
@@ -56,6 +56,7 @@ async def test_comment_is_delimited_and_absent_from_system_prompt() -> None:
     user_message = body["messages"][1]
     assert system_message["role"] == "system"
     assert "IGNORA TODO" not in system_message["content"]
+    assert "json" in system_message["content"]
     assert user_message["content"].startswith("<comentario>")
     assert "IGNORA TODO" in user_message["content"]
     assert body["response_format"] == {"type": "json_object"}

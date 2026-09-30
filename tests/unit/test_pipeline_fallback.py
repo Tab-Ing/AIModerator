@@ -2,13 +2,16 @@
 
 from __future__ import annotations
 
+import httpx
+
+from aimoderator.config import Settings
 from aimoderator.core.errors import EngineError
 from aimoderator.engines.base import (
     ClassificationEngine,
     ClassificationRequest,
     ClassificationResult,
 )
-from aimoderator.moderation.pipeline import ModerationPipeline
+from aimoderator.moderation.pipeline import ModerationPipeline, build_engine_registry
 from aimoderator.moderation.policy import PolicyEngine
 from aimoderator.moderation.prompt_injection import PromptInjectionGuard
 
@@ -67,3 +70,12 @@ async def test_consensus_merges_max_scores() -> None:
     ).run("hola")
     assert decision.engine.startswith("consensus:")
     assert decision.scores["toxicity"] == 0.8
+
+
+async def test_registry_registers_optional_engines() -> None:
+    settings = Settings(llm_enabled=True, llm_api_key="k", local_enabled=True)
+    async with httpx.AsyncClient() as client:
+        registry = build_engine_registry(settings, client)
+    assert registry.has("heuristic")
+    assert registry.has("llm")
+    assert registry.has("local")

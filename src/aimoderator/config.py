@@ -37,7 +37,8 @@ class Settings(BaseSettings):
 
     llm_enabled: bool = False
     llm_base_url: str = "https://api.deepseek.com"
-    llm_model: str = "deepseek-chat"
+    llm_chat_path: str = "/chat/completions"
+    llm_model: str = "deepseek-flash"
     llm_api_key: str | None = None
 
     local_enabled: bool = False

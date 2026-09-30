@@ -13,6 +13,7 @@ def test_default_engine_config() -> None:
     config = EngineConfig()
     assert config.primary == "heuristic"
     assert config.use_pi_guard is True
+    assert config.consensus is False
     assert config.fallbacks == []
 
 

@@ -80,7 +80,7 @@ mypy_path = "src"
 explicit_package_bases = true
 
 [[tool.mypy.overrides]]
-module = ["httpx.*", "psycopg.*"]
+module = ["httpx.*", "psycopg.*", "sentence_transformers.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]

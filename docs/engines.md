@@ -41,18 +41,26 @@ sin generación de texto libre, en decenas/cientos de ms.
 
 ## LLM — `LLMEngine`
 
-Cliente compatible con la API OpenAI (`/chat/completions`), configurable por
-`base_url` y `model` (DeepSeek, OpenAI, etc.). Se usa con:
+Cliente compatible con la API OpenAI (`POST /v1/chat/completions`), configurable por
+`base_url` y `model` (DeepSeek, OpenAI, etc.). Comportamiento:
 
-- Salida en JSON validada por Pydantic.
-- Comentario tratado como dato no confiable (ver `docs/prompt-injection.md`).
-- Rol: análisis en profundidad, casos ambiguos, fallback.
+- El comentario se envía **delimitado** (`<comentario>…</comentario>`) como dato no
+  confiable; nunca se concatena al system prompt.
+- Se exige salida en JSON (`response_format=json_object`) y se valida con Pydantic
+  (`toxicity`, `harassment`, `hate`, `spam`, `prompt_injection`, `confidence`).
+- Config: `AIMODERATOR_LLM_ENABLED`, `AIMODERATOR_LLM_BASE_URL`,
+  `AIMODERATOR_LLM_MODEL`, `AIMODERATOR_LLM_API_KEY`.
+- Rol: análisis en profundidad, casos ambiguos, fallback/consenso.
 
 ## Local — `LocalMLEngine`
 
-` sentence-transformers` / clasificador zero-shot, ejecutado on-premise. Requiere el
-extra opcional `local` (`make install-local`). Útil cuando no se pueden enviar datos a
-terceros. Rol: fallback privado o consenso.
+Embeddings con `sentence-transformers` ejecutados on-premise (sin salida a terceros).
+Requiere el extra opcional `local` (`make install-local`); la importación es perezosa y
+si falta se lanza `EngineError`. Puntúa por **similitud coseno** contra frases prototipo
+por categoría.
+
+- Config: `AIMODERATOR_LOCAL_ENABLED`, `AIMODERATOR_LOCAL_MODEL`.
+- Rol: fallback privado o consenso.
 
 ## Heurístico — `HeuristicEngine`
 
@@ -61,6 +69,21 @@ rápido y determinista; sin costo. Rol: short-circuit barato y saneamiento previ
 
 ## Selección y composición
 
-El `engine_config` del perfil define el motor primario y los fallbacks. El `registry`
-resuelve la implementación por nombre y el pipeline aplica fallback ante errores o
-timeouts, y opcionalmente consenso entre motores.
+El `engine_config` del perfil define el motor primario, los fallbacks y el modo:
+
+```json
+{
+  "primary": "jev",
+  "fallbacks": ["heuristic"],
+  "consensus": false,
+  "use_pi_guard": true
+}
+```
+
+- **Fallback** (`consensus: false`): si el motor primario lanza `EngineError` (error de
+  red, timeout, respuesta inválida), se intentan los fallbacks en orden.
+- **Consenso** (`consensus: true`): se ejecutan primario y fallbacks en paralelo y se
+  combinan los scores tomando el **máximo** por categoría; el motor reportado es
+  `consensus:<a>+<b>`.
+
+El `registry` resuelve cada motor por nombre; los motores no disponibles se omiten.

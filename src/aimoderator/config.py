@@ -40,6 +40,9 @@ class Settings(BaseSettings):
     llm_model: str = "deepseek-chat"
     llm_api_key: str | None = None
 
+    local_enabled: bool = False
+    local_model: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+
     default_engine: str = "heuristic"
     engine_timeout_seconds: float = 10.0
 

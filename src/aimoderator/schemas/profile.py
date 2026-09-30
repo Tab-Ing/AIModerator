@@ -27,6 +27,7 @@ class EngineConfig(APIModel):
 
     primary: str = Field(default="heuristic", min_length=1, max_length=50)
     fallbacks: list[str] = Field(default_factory=list)
+    consensus: bool = False
     use_pi_guard: bool = True
     options: dict[str, Any] = Field(default_factory=dict)
 

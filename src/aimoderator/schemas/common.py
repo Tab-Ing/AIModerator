@@ -34,6 +34,15 @@ class Plan(StrEnum):
     COMMERCIAL = "commercial"
 
 
+DEFAULT_CATEGORIES: list[Category] = [
+    Category.TOXICITY,
+    Category.HARASSMENT,
+    Category.HATE,
+    Category.SPAM,
+    Category.PROMPT_INJECTION,
+]
+
+
 class APIModel(BaseModel):
     """Base para esquemas de entrada/salida de la API."""
 

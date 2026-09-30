@@ -2,8 +2,8 @@
 
 La documentación interactiva está en `/docs` (OpenAPI). Base de las rutas: `/v1`.
 
-> Estado: Fase 0. Solo los endpoints de estado están activos; el resto llega en fases
-> siguientes (ver `PLAN.md`).
+> Estado: Fase 1. Están activos los endpoints de estado y `POST /v1/moderate`.
+> Los perfiles y cuotas llegan en la Fase 2 (ver `PLAN.md`).
 
 ## Autenticación
 
@@ -15,18 +15,17 @@ X-API-Key: aim_...
 
 La key identifica al `tenant` y sus permisos. Se almacena hasheada; nunca en claro.
 
-## Endpoints previstos
+## `POST /v1/moderate`
 
-### `POST /v1/moderate`
-
-Clasifica un comentario según un perfil.
+Clasifica un comentario y devuelve la acción de moderación. Requiere `X-API-Key`.
+En esta fase usa el motor configurado por defecto (`AIMODERATOR_DEFAULT_ENGINE`);
+el `profile_id` se incorpora en la Fase 2.
 
 Request:
 
 ```json
 {
   "text": "texto del comentario",
-  "profile_id": "uuid-opcional",
   "external_id": "id-en-la-red",
   "platform": "instagram",
   "locale": "es-AR",
@@ -43,13 +42,17 @@ Response:
   "categories": ["toxicity"],
   "scores": {"toxicity": 0.12, "spam": 0.03},
   "confidence": 0.94,
-  "engine": "jev",
+  "engine": "heuristic",
   "injection_detected": false,
-  "latency_ms": 87
+  "text_truncated": false,
+  "reasons": [],
+  "latency_ms": 3
 }
 ```
 
-### Perfiles de uso
+Errores: `401` (API key ausente/inválida), `422` (payload inválido), `502` (fallo del motor).
+
+### Perfiles de uso (Fase 2)
 
 | Método | Ruta | Descripción |
 | --- | --- | --- |

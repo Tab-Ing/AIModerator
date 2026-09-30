@@ -38,6 +38,15 @@ class Settings(BaseSettings):
     llm_model: str = "deepseek-chat"
     llm_api_key: str | None = None
 
+    default_engine: str = "heuristic"
+    engine_timeout_seconds: float = 10.0
+
+    max_text_length: int = 5000
+    store_redacted_text: bool = False
+    redacted_text_max_chars: int = 500
+    pi_short_circuit: bool = True
+    pi_threshold: float = 0.5
+
     @property
     def is_production(self) -> bool:
         return self.env.lower() == "production"

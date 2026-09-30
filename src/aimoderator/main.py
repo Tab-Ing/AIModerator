@@ -2,6 +2,10 @@
 
 from __future__ import annotations
 
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+
+import httpx
 from fastapi import FastAPI
 
 from aimoderator import __version__
@@ -9,6 +13,7 @@ from aimoderator.api.v1.router import api_router
 from aimoderator.config import Settings, get_settings
 from aimoderator.core.errors import install_exception_handlers
 from aimoderator.core.logging import configure_logging
+from aimoderator.moderation.pipeline import build_pipeline
 
 DESCRIPTION = (
     "API multi-tenant para moderar comentarios de redes sociales. "
@@ -22,6 +27,16 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app_settings = settings or get_settings()
     configure_logging(app_settings.log_level)
 
+    @asynccontextmanager
+    async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+        client = httpx.AsyncClient()
+        app.state.http_client = client
+        app.state.pipeline = build_pipeline(app_settings, client)
+        try:
+            yield
+        finally:
+            await client.aclose()
+
     app = FastAPI(
         title="AIModerator API",
         version=__version__,
@@ -29,6 +44,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         docs_url="/docs",
         redoc_url="/redoc",
         openapi_url="/openapi.json",
+        lifespan=lifespan,
     )
 
     install_exception_handlers(app)

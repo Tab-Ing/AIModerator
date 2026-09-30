@@ -34,6 +34,11 @@ class RateLimitError(AIModeratorError):
     code = "rate_limited"
 
 
+class EngineError(AIModeratorError):
+    status_code = status.HTTP_502_BAD_GATEWAY
+    code = "engine_error"
+
+
 def install_exception_handlers(app: FastAPI) -> None:
     """Registra los manejadores de excepciones de dominio."""
 

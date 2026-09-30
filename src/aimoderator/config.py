@@ -27,6 +27,8 @@ class Settings(BaseSettings):
     secret_key: str = "dev-insecure-change-me"
     api_key_prefix: str = "aim_"
     rate_limit_per_minute: int = 120
+    free_plan_daily_quota: int = 1000
+    commercial_plan_daily_quota: int = 100_000
 
     jev_enabled: bool = False
     jev_base_url: str = "https://api.defapi.org"

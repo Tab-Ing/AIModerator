@@ -1,4 +1,4 @@
-"""Servicio de moderación: ejecuta el pipeline y persiste el resultado."""
+"""Servicio de moderación: ejecuta el pipeline, controla cuota y persiste."""
 
 from __future__ import annotations
 
@@ -7,19 +7,26 @@ import hashlib
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from aimoderator.config import Settings
-from aimoderator.db.models import Tenant
+from aimoderator.db.models import Profile, Tenant
 from aimoderator.db.repositories.moderation import create_moderation_record
 from aimoderator.moderation.pipeline import ModerationPipeline
 from aimoderator.schemas.common import Category
 from aimoderator.schemas.moderation import ModerationRequest, ModerationResponse
+from aimoderator.services.usage_service import UsageService
 
 
 class ModerationService:
-    """Caso de uso: moderar un comentario para un tenant."""
+    """Caso de uso: moderar un comentario para un tenant y un perfil."""
 
-    def __init__(self, pipeline: ModerationPipeline, settings: Settings) -> None:
+    def __init__(
+        self,
+        pipeline: ModerationPipeline,
+        settings: Settings,
+        usage: UsageService | None = None,
+    ) -> None:
         self._pipeline = pipeline
         self._settings = settings
+        self._usage = usage or UsageService(settings)
 
     async def moderate(
         self,
@@ -27,7 +34,10 @@ class ModerationService:
         *,
         session: AsyncSession,
         tenant: Tenant,
+        profile: Profile | None = None,
     ) -> ModerationResponse:
+        await self._usage.ensure_within_quota(session, tenant)
+
         decision = await self._pipeline.run(
             payload.text,
             locale=payload.locale,
@@ -42,7 +52,7 @@ class ModerationService:
         record = await create_moderation_record(
             session,
             tenant_id=tenant.id,
-            profile_id=None,
+            profile_id=profile.id if profile is not None else None,
             external_id=payload.external_id,
             platform=payload.platform,
             text_hash=text_hash,
@@ -59,6 +69,7 @@ class ModerationService:
             injection_flag=decision.injection_detected,
             latency_ms=decision.latency_ms,
         )
+        await self._usage.consume(session, tenant)
         await session.commit()
 
         return ModerationResponse(

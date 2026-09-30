@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 import time
 from dataclasses import dataclass, field
+from typing import Any
 
 import httpx
 
@@ -15,7 +16,7 @@ from aimoderator.engines.jev import JevEngine
 from aimoderator.engines.registry import EngineRegistry
 from aimoderator.moderation.normalizer import normalize_text
 from aimoderator.moderation.policy import PolicyEngine
-from aimoderator.moderation.prompt_injection import PromptInjectionGuard
+from aimoderator.moderation.prompt_injection import InjectionAssessment, PromptInjectionGuard
 from aimoderator.schemas.common import DEFAULT_CATEGORIES, Action, Category
 
 logger = logging.getLogger(__name__)
@@ -48,12 +49,14 @@ class ModerationPipeline:
         policy: PolicyEngine,
         max_text_length: int = 5000,
         short_circuit: bool = True,
+        use_pi_guard: bool = True,
     ) -> None:
         self._engine = engine
         self._guard = guard
         self._policy = policy
         self._max_text_length = max_text_length
         self._short_circuit = short_circuit
+        self._use_pi_guard = use_pi_guard
 
     async def run(
         self,
@@ -64,7 +67,11 @@ class ModerationPipeline:
     ) -> ModerationDecision:
         started = time.perf_counter()
         normalized = normalize_text(text, max_length=self._max_text_length)
-        assessment = self._guard.assess(normalized.text)
+        assessment = (
+            self._guard.assess(normalized.text)
+            if self._use_pi_guard
+            else InjectionAssessment(detected=False, score=0.0)
+        )
         reasons = list(assessment.reasons)
 
         if self._short_circuit and assessment.detected:
@@ -136,11 +143,18 @@ def build_engine_registry(settings: Settings, client: httpx.AsyncClient) -> Engi
     return registry
 
 
-def build_pipeline(settings: Settings, client: httpx.AsyncClient) -> ModerationPipeline:
-    """Construye el pipeline de moderación por defecto."""
+def build_pipeline(
+    settings: Settings,
+    client: httpx.AsyncClient,
+    *,
+    engine_config: dict[str, Any] | None = None,
+    policy_rules: dict[str, Any] | None = None,
+) -> ModerationPipeline:
+    """Construye el pipeline según la config del perfil (o los valores por defecto)."""
     registry = build_engine_registry(settings, client)
 
-    engine_name = settings.default_engine
+    config: dict[str, Any] = engine_config or {}
+    engine_name = str(config.get("primary") or settings.default_engine)
     if not registry.has(engine_name):
         logger.warning("Motor '%s' no disponible; se usa 'heuristic'", engine_name)
         engine_name = "heuristic"
@@ -149,7 +163,8 @@ def build_pipeline(settings: Settings, client: httpx.AsyncClient) -> ModerationP
     return ModerationPipeline(
         engine=engine,
         guard=PromptInjectionGuard(threshold=settings.pi_threshold),
-        policy=PolicyEngine(),
+        policy=PolicyEngine(policy_rules),
         max_text_length=settings.max_text_length,
         short_circuit=settings.pi_short_circuit,
+        use_pi_guard=bool(config.get("use_pi_guard", True)),
     )

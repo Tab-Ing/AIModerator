@@ -29,9 +29,19 @@ class UnauthorizedError(AIModeratorError):
     code = "unauthorized"
 
 
+class ForbiddenError(AIModeratorError):
+    status_code = status.HTTP_403_FORBIDDEN
+    code = "forbidden"
+
+
 class RateLimitError(AIModeratorError):
     status_code = status.HTTP_429_TOO_MANY_REQUESTS
     code = "rate_limited"
+
+
+class QuotaExceededError(AIModeratorError):
+    status_code = status.HTTP_429_TOO_MANY_REQUESTS
+    code = "quota_exceeded"
 
 
 class EngineError(AIModeratorError):

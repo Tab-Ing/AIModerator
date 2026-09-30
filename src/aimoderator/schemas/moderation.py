@@ -14,6 +14,7 @@ class ModerationRequest(APIModel):
     """Comentario a moderar. El texto se trata como dato no confiable."""
 
     text: str = Field(min_length=1, max_length=20000)
+    profile_id: UUID | None = None
     external_id: str | None = Field(default=None, max_length=255)
     platform: str | None = Field(default=None, max_length=50)
     locale: str | None = Field(default=None, max_length=20)

@@ -4,8 +4,10 @@ from __future__ import annotations
 
 from fastapi import APIRouter
 
-from aimoderator.api.v1 import health, moderate
+from aimoderator.api.v1 import health, moderate, profiles, usage
 
 api_router = APIRouter()
 api_router.include_router(health.router)
 api_router.include_router(moderate.router)
+api_router.include_router(profiles.router)
+api_router.include_router(usage.router)

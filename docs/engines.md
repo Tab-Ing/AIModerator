@@ -14,16 +14,30 @@ Con `ClassificationRequest` (texto, locale, plataforma, categorías, opciones) y
 
 ## Jev AI — `JevEngine`
 
-Modelo *System One* de [Jev AI](https://jevai.net): entrada no estructurada y salida
-**tipada y calibrada**, sin generación de texto libre, en decenas/cientos de ms.
+Modelo *System One* de [Jev AI](https://jevai.net) accedido vía **Defapi**
+(`https://api.defapi.org`). Entrada no estructurada y salida **tipada y calibrada**,
+sin generación de texto libre, en decenas/cientos de ms.
 
-- Endpoint conceptual: `POST /v1/decide` con `{ "input": ..., "schema": {...} }`.
-- Salida típica: `{ "route": ..., "score": 0.94, "confidence": 0.97 }`.
-- Esquema de moderación previsto: `{ toxicity, harassment, hate, spam, prompt_injection, action }`.
+- **Endpoint**: `POST /api/v1/decisions` con `Authorization: Bearer <Clave Defapi>`.
+- **Payload**:
+  ```json
+  { "model": "typesafe/jev-1.13",
+    "state": "<texto del comentario>",
+    "questions": {
+      "toxicity": {"type": "noul", "instructions": "..."},
+      "severity": {"type": "score", "instructions": "...", "criteria": ["limpio", "...", "crítico"]}
+    } }
+  ```
+- **Primitivas**: `noul` (probabilidad binaria 0..1) para las categorías
+  (`toxicity`, `harassment`, `hate`, `spam`, `prompt_injection`) y `score` (escala
+  ordenada) para la severidad general, de la que se toma `confidence`.
+- **Respuesta**: `{ "model": ..., "answers": { "<q>": {"type": ..., "noul"|"score"|"choice", "confidence", "probabilities"} }, "usage": {...} }`.
+- El comentario va como `state` (**dato no confiable**); las preguntas son un esquema
+  fijo de la aplicación.
 - Ventajas: latencia baja, costo bajo, sin alucinaciones, confianza calibrada.
-- Rol: **primer filtro** por defecto y detector de jailbreak/prompt-injection.
-- Config: `AIMODERATOR_JEV_*` (base URL, modelo, API key). *Endpoints/autenticación
-  exactos a confirmar con el proveedor.*
+- Config: `AIMODERATOR_JEV_ENABLED`, `AIMODERATOR_JEV_BASE_URL`,
+  `AIMODERATOR_JEV_MODEL`, `AIMODERATOR_JEV_API_KEY` (key de Defapi, prefijo `dk-`).
+- Verificación en vivo: `.venv/bin/python scripts/check_jev.py`.
 
 ## LLM — `LLMEngine`
 

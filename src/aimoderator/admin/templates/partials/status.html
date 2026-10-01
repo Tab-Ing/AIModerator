@@ -1,0 +1,24 @@
+<div class="cards">
+  <div class="card">
+    <div class="kpi">{{ stats.moderations_total | int }}</div>
+    <div class="label">Moderaciones</div>
+  </div>
+  <div class="card">
+    <div class="kpi">{{ stats.http_requests_total | int }}</div>
+    <div class="label">Solicitudes HTTP</div>
+  </div>
+  <div class="card">
+    <div class="kpi">{{ queue.pending }}</div>
+    <div class="label">Jobs en cola</div>
+    <div class="muted">en proceso: {{ queue.in_progress }}</div>
+  </div>
+  <div class="card">
+    {% if not queue.enabled %}
+      <div class="kpi">OFF</div><div class="label">Redis/Cola</div>
+    {% elif queue.reachable %}
+      <div class="kpi ok">OK</div><div class="label">Redis/Cola</div>
+    {% else %}
+      <div class="kpi err">N/D</div><div class="label">Redis/Cola</div>
+    {% endif %}
+  </div>
+</div>

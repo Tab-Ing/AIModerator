@@ -7,11 +7,17 @@ from datetime import UTC, datetime
 from typing import Annotated
 
 import httpx
+from arq.connections import ArqRedis
 from fastapi import Depends, Header, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from aimoderator.config import Settings, get_settings
-from aimoderator.core.errors import ForbiddenError, RateLimitError, UnauthorizedError
+from aimoderator.core.errors import (
+    ForbiddenError,
+    QueueUnavailableError,
+    RateLimitError,
+    UnauthorizedError,
+)
 from aimoderator.core.rate_limit import get_rate_limiter
 from aimoderator.core.security import hash_api_key
 from aimoderator.db.models import ApiKey, Tenant
@@ -125,3 +131,14 @@ def get_pipeline(request: Request) -> ModerationPipeline:
 
 
 PipelineParam = Annotated[ModerationPipeline, Depends(get_pipeline)]
+
+
+def get_redis(request: Request) -> ArqRedis:
+    """Recupera el pool de Redis de la cola (si está habilitada)."""
+    redis = getattr(request.app.state, "redis", None)
+    if not isinstance(redis, ArqRedis):
+        raise QueueUnavailableError("La cola de trabajos no está habilitada")
+    return redis
+
+
+RedisParam = Annotated[ArqRedis, Depends(get_redis)]

@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import os
 from collections.abc import Iterator
+
+os.environ.setdefault("AIMODERATOR_QUEUE_ENABLED", "false")
 
 import pytest
 from fastapi import FastAPI

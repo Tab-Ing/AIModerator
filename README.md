@@ -12,25 +12,35 @@ obtiene una decisión de moderación por comentario vía REST.
   normalización, detector dedicado y validación estricta de salidas.
 - **Doble licencia:** AGPL-3.0-or-later para uso libre; licencia comercial negociada
   para empresas.
+- **Panel de administración:** FastAPI + Jinja2 + HTMX en `/admin` (tenants, API keys,
+  perfiles, registros, métricas).
+- **Cola de trabajos:** lotes asíncronos con Redis + arq (`/v1/jobs/moderate`).
 
 ## Estado
 
-Fase 0 (scaffolding) completada. Ver [`PLAN.md`](PLAN.md) y [`MEMORY.md`](MEMORY.md).
+Fases 0–4 completadas, más panel de administración y cola Redis.
+Ver [`PLAN.md`](PLAN.md) y [`MEMORY.md`](MEMORY.md).
 
 ## Inicio rápido
 
 ```bash
 make venv        # crea .venv e instala dependencias
 cp .env.example .env
-make docker-up   # levanta PostgreSQL (+ API)
+make docker-up   # levanta PostgreSQL + Redis + API (+ worker)
 make migrate     # aplica migraciones
 make dev         # API en http://localhost:8000/docs
+make worker      # worker de arq para lotes asíncronos
 ```
+
+Panel de administración: <http://localhost:8000/admin> (credenciales por
+`AIMODERATOR_ADMIN_USERNAME` / `AIMODERATOR_ADMIN_PASSWORD`).
 
 Tests y calidad:
 
 ```bash
-make lint typecheck test
+make lint typecheck test          # unitarios
+make test-integration             # requiere PostgreSQL
+make test-live                    # llama a proveedores externos (requiere API key)
 ```
 
 ## Documentación

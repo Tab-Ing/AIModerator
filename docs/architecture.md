@@ -79,3 +79,22 @@ motores externos se invocan con timeout y se contempla fallback/consenso.
   `docker-compose.yml` con PostgreSQL + API.
 - El contenedor de API aplica `alembic upgrade head` y luego ejecuta `uvicorn`.
 - `HEALTHCHECK` sobre `/v1/health`.
+- `docker-compose` incluye además **Redis** y un contenedor **worker** (arq).
+
+## Panel de administración
+
+- Servido por la misma app en `/admin` con **Jinja2 + HTMX** (sin build de Node).
+- Autenticación por login (`AIMODERATOR_ADMIN_USERNAME` / `_PASSWORD`) con cookie de
+  sesión firmada (Starlette `SessionMiddleware`).
+- Funciones: dashboard (métricas + estado de cola), gestión de tenants, API keys,
+  perfiles de uso, uso/cuotas y últimos registros.
+- Templates en `src/aimoderator/admin/templates/` y estáticos en `.../static/`.
+
+## Cola de trabajos (Redis + arq)
+
+- `POST /v1/jobs/moderate` encola un lote y responde `202` con `job_id`.
+- `GET /v1/jobs/{job_id}` devuelve estado (`queued`, `in_progress`, `complete`, …) y el
+  resultado cuando termina.
+- El worker (`python -m aimoderator.worker`) ejecuta `moderate_batch_task`: resuelve
+  tenant/perfil, corre el pipeline y persiste; la cuota se descuenta por lote.
+- Se habilita con `AIMODERATOR_QUEUE_ENABLED=true` y `AIMODERATOR_REDIS_URL`.

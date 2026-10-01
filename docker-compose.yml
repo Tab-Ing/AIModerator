@@ -16,14 +16,29 @@ services:
       timeout: 5s
       retries: 10
 
+  redis:
+    image: redis:7-alpine
+    container_name: aimoderator-redis
+    ports:
+      - "56379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   api:
     build: .
     container_name: aimoderator-api
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       AIMODERATOR_DATABASE_URL: postgresql+psycopg://aimoderator:aimoderator@postgres:5432/aimoderator
+      AIMODERATOR_REDIS_URL: redis://redis:6379/0
+      AIMODERATOR_QUEUE_ENABLED: "true"
     env_file:
       - .env
     ports:
@@ -31,6 +46,22 @@ services:
     command: >
       sh -c "alembic upgrade head &&
              uvicorn aimoderator.main:app --host 0.0.0.0 --port 8000"
+
+  worker:
+    build: .
+    container_name: aimoderator-worker
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      AIMODERATOR_DATABASE_URL: postgresql+psycopg://aimoderator:aimoderator@postgres:5432/aimoderator
+      AIMODERATOR_REDIS_URL: redis://redis:6379/0
+      AIMODERATOR_QUEUE_ENABLED: "true"
+    env_file:
+      - .env
+    command: python -m aimoderator.worker
 
 volumes:
   postgres_data:

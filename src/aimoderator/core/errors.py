@@ -44,6 +44,11 @@ class QuotaExceededError(AIModeratorError):
     code = "quota_exceeded"
 
 
+class QueueUnavailableError(AIModeratorError):
+    status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+    code = "queue_unavailable"
+
+
 class EngineError(AIModeratorError):
     status_code = status.HTTP_502_BAD_GATEWAY
     code = "engine_error"

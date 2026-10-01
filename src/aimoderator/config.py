@@ -30,6 +30,13 @@ class Settings(BaseSettings):
     free_plan_daily_quota: int = 1000
     commercial_plan_daily_quota: int = 100_000
 
+    admin_username: str = "admin"
+    admin_password: str = "admin"
+    session_secret_key: str | None = None
+
+    redis_url: str = "redis://localhost:56379/0"
+    queue_enabled: bool = False
+
     jev_enabled: bool = False
     jev_base_url: str = "https://api.defapi.org"
     jev_model: str = "typesafe/jev-1.13"
@@ -56,6 +63,10 @@ class Settings(BaseSettings):
     @property
     def is_production(self) -> bool:
         return self.env.lower() == "production"
+
+    def session_key(self) -> str:
+        """Clave para firmar la cookie de sesión del panel."""
+        return self.session_secret_key or self.secret_key
 
 
 @lru_cache(maxsize=1)

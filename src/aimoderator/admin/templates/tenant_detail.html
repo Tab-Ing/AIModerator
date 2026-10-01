@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}{{ tenant.name }}{% endblock %}
+{% block content %}
+<p><a href="/admin/tenants">← Tenants</a></p>
+<h1>{{ tenant.name }} <span class="tag">{{ tenant.plan }}</span></h1>
+<p class="muted">slug <code>{{ tenant.slug }}</code> · id <code>{{ tenant.id }}</code></p>
+
+{% if new_key %}
+<div class="alert">
+  <strong>Nueva API key (se muestra una sola vez):</strong>
+  <code class="key">{{ new_key }}</code>
+</div>
+{% endif %}
+
+<div class="cards">
+  <div class="card"><div class="kpi">{{ usage.used }}</div><div class="label">Uso hoy</div><div class="muted">cuota {{ usage.quota }}</div></div>
+  <div class="card"><div class="kpi">{{ usage.remaining }}</div><div class="label">Restante</div></div>
+  <div class="card"><div class="kpi">{{ profiles | length }}</div><div class="label">Perfiles</div></div>
+  <div class="card"><div class="kpi">{{ records_total }}</div><div class="label">Registros</div></div>
+</div>
+
+<section class="panel">
+  <h2>API keys</h2>
+  <form method="post" action="/admin/tenants/{{ tenant.id }}/keys" class="row">
+    <input name="label" placeholder="Etiqueta (opcional)" />
+    <input name="scopes" placeholder="scopes separados por coma (vacío = total)" />
+    <button type="submit">Generar key</button>
+  </form>
+  <table>
+    <thead><tr><th>Etiqueta</th><th>Scopes</th><th>Estado</th><th>Creada</th><th></th></tr></thead>
+    <tbody>
+      {% for k in api_keys %}
+      <tr>
+        <td>{{ k.label or "—" }}</td>
+        <td>{% if k.scopes %}<code>{{ k.scopes | join(", ") }}</code>{% else %}<span class="muted">total</span>{% endif %}</td>
+        <td>{% if k.is_active and not k.revoked_at %}<span class="ok">activa</span>{% else %}<span class="err">revocada</span>{% endif %}</td>
+        <td class="muted">{{ k.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+        <td>
+          {% if k.is_active and not k.revoked_at %}
+          <form method="post" action="/admin/tenants/{{ tenant.id }}/keys/{{ k.id }}/revoke">
+            <button class="danger" type="submit">Revocar</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="muted">Sin API keys.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<section class="panel">
+  <h2>Perfiles de uso</h2>
+  <form method="post" action="/admin/tenants/{{ tenant.id }}/profiles" class="row">
+    <input name="name" placeholder="Nombre" required />
+    <select name="primary">
+      <option value="heuristic">heuristic</option>
+      <option value="jev">jev</option>
+      <option value="llm">llm</option>
+      <option value="local">local</option>
+    </select>
+    <input name="description" placeholder="Descripción (opcional)" />
+    <label class="check"><input type="checkbox" name="use_pi_guard" value="on" checked /> guard anti-PI</label>
+    <button type="submit">Crear perfil</button>
+  </form>
+  <table>
+    <thead><tr><th>Nombre</th><th>Motor</th><th>v</th><th>Activo</th><th></th></tr></thead>
+    <tbody>
+      {% for p in profiles %}
+      <tr>
+        <td>{{ p.name }}</td>
+        <td><code>{{ p.engine_config.primary }}</code></td>
+        <td>{{ p.version }}</td>
+        <td>{% if p.is_active %}<span class="ok">sí</span>{% else %}<span class="muted">no</span>{% endif %}</td>
+        <td class="actions">
+          {% if not p.is_active %}
+          <form method="post" action="/admin/tenants/{{ tenant.id }}/profiles/{{ p.id }}/activate">
+            <button type="submit">Activar</button>
+          </form>
+          {% endif %}
+          <form method="post" action="/admin/tenants/{{ tenant.id }}/profiles/{{ p.id }}/delete">
+            <button class="danger" type="submit">Eliminar</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="muted">Sin perfiles.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<section class="panel">
+  <h2>Últimos registros</h2>
+  <table>
+    <thead><tr><th>Fecha</th><th>Acción</th><th>Motor</th><th>Inyección</th><th>ms</th></tr></thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td class="muted">{{ r.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+        <td>{{ r.decision.get("action", "—") }}</td>
+        <td><code>{{ r.engine or "—" }}</code></td>
+        <td>{% if r.injection_flag %}<span class="err">sí</span>{% else %}no{% endif %}</td>
+        <td>{{ r.latency_ms or "—" }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="muted">Sin registros.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

@@ -4,7 +4,7 @@ PY := $(VENV)/bin/python
 PIP := $(VENV)/bin/pip
 UV := uv
 
-.PHONY: help venv install install-local dev test test-integration lint format typecheck migrate revision docker-up docker-down clean
+.PHONY: help venv install install-local dev worker test test-integration test-live lint format typecheck migrate revision docker-up docker-down clean
 
 help:
 	@echo "Objetivos disponibles:"
@@ -34,6 +34,9 @@ install-local: ## Instala además los motores locales (sentence-transformers/tor
 
 dev: ## Levanta la API en modo desarrollo
 	$(VENV)/bin/uvicorn aimoderator.main:app --reload --host 0.0.0.0 --port 8000
+
+worker: ## Levanta el worker de arq (requiere Redis)
+	$(VENV)/bin/python -m aimoderator.worker
 
 test: ## Ejecuta la suite de tests (sin Postgres ni proveedores externos)
 	$(VENV)/bin/pytest -m "not integration and not live" --cov=aimoderator --cov-report=term-missing

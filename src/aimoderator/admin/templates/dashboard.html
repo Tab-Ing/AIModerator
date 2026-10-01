@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>Dashboard</h1>
+<p class="muted">Entorno: <code>{{ env }}</code> · actualiza cada 5s</p>
+<div id="status" hx-get="/admin/partials/status" hx-trigger="every 5s" hx-swap="innerHTML">
+  {% include "partials/status.html" %}
+</div>
+<div class="grid">
+  <a class="card link" href="/admin/tenants">
+    <h2>Tenants</h2>
+    <p class="muted">Empresas, API keys y perfiles de uso.</p>
+  </a>
+  <a class="card link" href="/metrics" target="_blank">
+    <h2>Métricas</h2>
+    <p class="muted">Exposición Prometheus en <code>/metrics</code>.</p>
+  </a>
+  <a class="card link" href="/docs" target="_blank">
+    <h2>API (OpenAPI)</h2>
+    <p class="muted">Documentación interactiva en <code>/docs</code>.</p>
+  </a>
+</div>
+{% endblock %}

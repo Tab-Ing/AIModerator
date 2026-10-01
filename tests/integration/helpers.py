@@ -74,6 +74,13 @@ async def latest_record_profile_id(tenant_id: uuid.UUID) -> uuid.UUID | None:
         return result.scalar_one_or_none()
 
 
+async def delete_tenant_by_slug(slug: str) -> None:
+    """Borra un tenant por slug (las FK en cascada limpian sus hijos)."""
+    async with _Session() as session:
+        await session.execute(delete(Tenant).where(Tenant.slug == slug))
+        await session.commit()
+
+
 async def set_daily_usage(tenant_id: uuid.UUID, count: int) -> None:
     """Fija el contador de uso de hoy a ``count``."""
     async with _Session() as session:

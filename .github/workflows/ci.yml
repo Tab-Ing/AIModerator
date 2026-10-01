@@ -24,8 +24,19 @@ jobs:
           --health-timeout 5s
           --health-retries 10
 
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
     env:
       AIMODERATOR_DATABASE_URL: postgresql+psycopg://aimoderator:aimoderator@localhost:5432/aimoderator
+      AIMODERATOR_REDIS_URL: redis://localhost:6379/0
       AIMODERATOR_SECRET_KEY: ci-secret-key
 
     steps:

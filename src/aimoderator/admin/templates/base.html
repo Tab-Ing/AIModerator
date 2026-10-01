@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}Admin{% endblock %} · AIModerator</title>
+  <link rel="stylesheet" href="/admin/static/admin.css" />
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/admin">AIModerator <span class="tag">admin</span></a>
+    <nav>
+      <a href="/admin">Dashboard</a>
+      <a href="/admin/tenants">Tenants</a>
+      <a href="/metrics" target="_blank">/metrics</a>
+      <a class="logout" href="/admin/logout">Salir</a>
+    </nav>
+  </header>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+</body>
+</html>

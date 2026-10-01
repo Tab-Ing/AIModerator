@@ -114,3 +114,12 @@ Devuelve `{"count": 2, "results": [ ... ]}`.
 | GET | `/v1/ready` | Readiness (verifica PostgreSQL) |
 | GET | `/v1/version` | Versión del servicio |
 | GET | `/metrics` | Métricas Prometheus (fuera de `/v1`) |
+| POST | `/v1/jobs/moderate` | Encola un lote asíncrono (`202` + `job_id`) |
+| GET | `/v1/jobs/{job_id}` | Estado/resultado del trabajo |
+
+### Trabajos asíncronos (cola Redis)
+
+`POST /v1/jobs/moderate` requiere el scope `moderate` y la cola habilitada
+(`AIMODERATOR_QUEUE_ENABLED=true`). Devuelve `{"job_id": "...", "status": "queued"}`;
+`GET /v1/jobs/{job_id}` responde `{"job_id", "status", "result"}` (el `result` tiene la
+misma forma que `/v1/moderate/batch`).

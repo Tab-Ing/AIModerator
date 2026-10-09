@@ -51,13 +51,13 @@ docs(prompt-injection): amplía el modelo de amenazas
 
 ## Licencia de las contribuciones (CLA)
 
-Este proyecto usa **doble licencia AGPL-3.0-or-later + comercial**. Para poder ofrecer
-la licencia comercial, todo aporte requiere aceptar el [`CLA.md`](CLA.md). El bot de CLA
-te lo pedirá al abrir el pull request. Sin la firma, el PR no puede fusionarse.
+Este proyecto es **source-available con doble licencia**: PolyForm Noncommercial 1.0.0
+(uso personal y sin fines de lucro) + licencia comercial. Para poder ofrecer la licencia
+comercial, todo aporte requiere aceptar el [`CLA.md`](CLA.md). El bot de CLA te lo pedirá
+al abrir el pull request. Sin la firma, el PR no puede fusionarse.
 
-Esto **no** cambia el requisito de que las empresas que quieran usar el software fuera
-de los términos de la AGPL deban **negociar y pagar** una licencia comercial (ver
-[`LICENSE-COMMERCIAL.md`](LICENSE-COMMERCIAL.md)).
+Esto **no** cambia el requisito de que cualquier uso comercial o SaaS deba **negociar y
+pagar** una licencia comercial (ver [`LICENSE-COMMERCIAL.md`](LICENSE-COMMERCIAL.md)).
 
 ## Reglas de seguridad
 

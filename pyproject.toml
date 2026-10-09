@@ -8,13 +8,14 @@ version = "0.1.0"
 description = "API multi-tenant para moderar comentarios de redes sociales con perfiles de uso configurables"
 readme = "README.md"
 requires-python = ">=3.12"
-license = { text = "AGPL-3.0-or-later" }
+license = "PolyForm-Noncommercial-1.0.0"
+license-files = ["LICENSE"]
 authors = [{ name = "AIModerator" }]
 keywords = ["moderation", "fastapi", "social-media", "prompt-injection", "jev-ai"]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Developers",
-  "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
+  "License :: Other/Proprietary License",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Framework :: FastAPI",

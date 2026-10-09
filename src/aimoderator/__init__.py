@@ -1,7 +1,8 @@
 """AIModerator: API multi-tenant para moderar comentarios de redes sociales.
 
-Licencia: AGPL-3.0-or-later. El uso por parte de empresas que no puedan
-cumplir la AGPL requiere una licencia comercial (ver LICENSE-COMMERCIAL.md).
+Licencia: PolyForm Noncommercial 1.0.0 (uso personal y sin fines de lucro).
+Todo uso comercial o SaaS requiere una licencia comercial (ver LICENSE-COMMERCIAL.md).
+No es código abierto.
 """
 
 __version__ = "0.1.0"

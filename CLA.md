@@ -23,10 +23,10 @@ de regalías y transferible** para reproducir, preparar obras derivadas, exhibir
 ejecutar, sublicenciar y distribuir tu Contribución y tales obras derivadas, bajo
 cualquier licencia, **incluyendo la licencia comercial del Proyecto**.
 
-Esta concesión es la que permite al Titular distribuir el Proyecto tanto bajo
-**AGPL-3.0-or-later** como bajo una **licencia comercial**. No transfiere la titularidad
-de tu código a un repositorio ajeno: tu aporte se integra al Proyecto y queda
-gobernado por las licencias de este.
+Esta concesión es la que permite al Titular distribuir el Proyecto tanto bajo la
+**PolyForm Noncommercial 1.0.0** (uso personal/sin fines de lucro) como bajo una
+**licencia comercial**. No transfiere la titularidad de tu código a un repositorio
+ajeno: tu aporte se integra al Proyecto y queda gobernado por las licencias de este.
 
 ## 3. Licencia de patentes
 
@@ -69,3 +69,5 @@ firma por email ante los mantenedores.
 **Nota para mantenedores:** si preferís no gestionar un CLA, la alternativa es un DCO
 (Developer Certificate of Origin) con `Signed-off-by`, pero el DCO **no** habilita por
 sí solo la relicenciación bajo licencia comercial. Por eso este proyecto usa **CLA**.
+El proyecto es *source-available* (PolyForm Noncommercial 1.0.0 + comercial), **no**
+código abierto.

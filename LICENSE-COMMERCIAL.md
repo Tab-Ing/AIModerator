@@ -1,28 +1,36 @@
 # Licencia comercial de AIModerator
 
-AIModerator se distribuye bajo **doble licencia**:
+AIModerator es **source-available** (código visible) bajo **doble licencia**:
 
-1. **GNU Affero General Public License v3.0 o posterior (AGPL-3.0-or-later)** — ver
-   [`LICENSE`](LICENSE). Es la licencia por defecto, de uso libre, también para uso
-   personal.
-2. **Licencia comercial** — para organizaciones que **no puedan o no quieran** cumplir
-   con las obligaciones de la AGPL (en particular la obligación de la sección 13 de
-   ofrecer el código fuente correspondiente a los usuarios que interactúan con el
-   software a través de una red).
+1. **PolyForm Noncommercial License 1.0.0** — ver [`LICENSE`](LICENSE). Permite el uso
+   **no comercial**: uso personal, estudio, hobby, investigación y **organizaciones sin
+   fines de lucro** (ONG, instituciones educativas, investigación pública, organismos
+   públicos de salud/seguridad, protección ambiental y gobierno).
+2. **Licencia comercial** — obligatoria para **todo uso comercial** o dentro de una
+   organización con fines de lucro. Se negocia caso por caso.
+
+> Esto **no es** una licencia de código abierto (no está aprobada por la OSI). El código
+> se puede ver y usar gratuitamente solo para fines no comerciales.
 
 ## ¿Quién necesita una licencia comercial?
 
-Necesitás una licencia comercial si querés, por ejemplo:
+Necesitás una licencia comercial si el uso es comercial, por ejemplo:
 
-- Ofrecer AIModerator como servicio (SaaS) a terceros **sin** liberar tu versión
-  modificada bajo AGPL.
-- Integrarlo en un producto propietario y no liberar el código.
-- Recibir garantía, soporte, SLA, indemnización o funcionalidades enterprise
-  (SSO, auditoría avanzada, multi-tenant gestionado, etc.).
+- Usar AIModerator dentro de una **empresa** o con fines de lucro, incluso de forma interna.
+- Ofrecerlo como **SaaS** o servicio gestionado a terceros.
+- Integrarlo en un **producto** que se vende o se ofrece a clientes.
+- **Revenderlo**, empaquetarlo o distribuirlo con fines comerciales.
+- Cualquier uso con **aplicación comercial anticipada**, aunque hoy sea una prueba.
 
-El simple uso interno por parte de una empresa **puede** quedar cubierto por la AGPL
-si no distribuye ni ofrece el software modificado por red a terceros. Ante la duda,
-consultá.
+## ¿Quién puede usarlo gratis?
+
+- **Personas** para uso personal (estudio, experimentos, hobby, proyectos amateur).
+- **ONG y organizaciones sin fines de lucro**, instituciones educativas, investigación
+  pública, organismos públicos de salud/seguridad y de gobierno (según la definición de
+  "noncommercial organization" de PolyForm Noncommercial 1.0.0).
+
+Si tu organización es una empresa o el uso persigue fines comerciales, necesitás la
+licencia comercial aunque no distribuyas el software.
 
 ## Cómo obtenerla
 

@@ -10,8 +10,9 @@ obtiene una decisión de moderación por comentario vía REST.
   `HeuristicEngine`).
 - **Anti-prompt-injection:** el comentario es siempre dato no confiable, con
   normalización, detector dedicado y validación estricta de salidas.
-- **Doble licencia:** AGPL-3.0-or-later para uso libre; licencia comercial negociada
-  para empresas.
+- **Source-available:** gratis para uso **personal y sin fines de lucro** (ONG,
+  educación, investigación) bajo PolyForm Noncommercial 1.0.0; **todo uso comercial o
+  SaaS** requiere una licencia comercial negociada.
 - **Panel de administración:** FastAPI + Jinja2 + HTMX en `/admin` (tenants, API keys,
   perfiles, registros, métricas).
 - **Cola de trabajos:** lotes asíncronos con Redis + arq (`/v1/jobs/moderate`).
@@ -53,6 +54,9 @@ make test-live                    # llama a proveedores externos (requiere API k
 
 ## Licencias
 
-- Código del núcleo: [AGPL-3.0-or-later](LICENSE).
-- Uso comercial/enterprise: [licencia comercial](LICENSE-COMMERCIAL.md).
+- Uso gratuito (personal y sin fines de lucro): [PolyForm Noncommercial 1.0.0](LICENSE).
+- Uso comercial o SaaS: [licencia comercial](LICENSE-COMMERCIAL.md) (se negocia).
 - Contribuciones: requieren [CLA](CLA.md).
+
+> AIModerator **no es** código abierto (Open Source). Es *source-available*: el código se
+> puede ver y usar gratis solo para fines no comerciales.

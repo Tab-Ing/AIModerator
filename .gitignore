@@ -29,6 +29,11 @@ coverage.xml
 *.pem
 *.key
 
+# Gestión interna del proyecto (no se publica)
+AGENTS.md
+PLAN.md
+MEMORY.md
+
 # IDE / SO
 .idea/
 .vscode/
